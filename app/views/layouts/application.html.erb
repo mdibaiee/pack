@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Pack</title>
+  <%= csrf_meta_tags %>
+  <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
+</head>
+<body>
+  <%= render 'shared/header' %>
+
+    <%= yield %>
+
+  <%= render 'shared/footer' %>
+</body>
+</html>
