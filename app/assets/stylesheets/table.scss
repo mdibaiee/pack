@@ -1,0 +1,39 @@
+@import 'variables';
+
+table {
+  width: 95%;
+
+  margin: 2rem;
+
+  background: $light-gray;
+
+  border-radius: 5px;
+
+  padding: 1rem 2rem;
+
+  th {
+    padding-bottom: 2rem;
+
+    text-align: left;
+  }
+
+  td {
+    padding: 1rem 0;
+  }
+
+  tr:not(:first-of-type) {
+    counter-increment: table;
+
+    &::before {
+      content: counter(table);
+
+      display: inline-block;
+
+      padding-top: 1rem;
+    }
+  }
+
+  tr:first-of-type::before {
+    content: '';
+  }
+}

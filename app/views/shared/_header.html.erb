@@ -1,0 +1,11 @@
+<header>
+  <h1><%= link_to 'Pack', root_path %></h1>
+
+  <div class='user'>
+    <% if current_user %>
+      <%= link_to current_user.username, files_path %>
+    <% else %>
+      <%= link_to 'Login', new_user_session_path %>
+    <% end %>
+  </div>
+</header>

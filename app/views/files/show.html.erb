@@ -1,0 +1,22 @@
+<%= link_to 'Back', files_path, { :class => 'btn' } %>
+
+<h2>File Details</h2>
+<table>
+  <tr>
+    <th>Name</th>
+    <th>URL</th>
+    <th>Size</th>
+    <th>Type</th>
+  </tr>
+  <tr>
+    <td><%= @item.name %></td>
+    <td><a href='/files/<%= @item.user.username %>/<%= @item.name %>?download'><%= @item.user.username %>/<%= @item.name %></a></td>
+    <td><%= @item.size %></td>
+    <td><%= @item.filetype %></td>
+  </tr>
+</table>
+
+<% if @item.filetype.start_with? 'image' %>
+  <h3>Image Preview</h3>
+  <img src="/files/<%= @item.user.username %>/<%= @item.name %>?download">
+<% end %>
