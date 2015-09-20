@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class ItemControllerTest < ActionController::TestCase
+class FileTest < ActiveSupport::TestCase
   # test "the truth" do
   #   assert true
   # end

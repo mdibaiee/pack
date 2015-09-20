@@ -1,8 +1,9 @@
 Rails.application.routes.draw do
+  devise_for :users
   root 'home#index'
 
-  resources :item
-  get 'file/:name' => 'file#show', constraints: { name: /[^\/]*/ }
+  resources :files
+  get 'files/:user/*name' => 'files#show', constraints: { name: /[^\/]*/ }
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

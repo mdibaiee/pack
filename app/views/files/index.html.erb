@@ -1,0 +1,25 @@
+<h2>Your Files</h2>
+<%= link_to 'New', { :action => :new }, { :class => 'btn' } %>
+
+<br />
+
+<% if @items.any? %>
+<table>
+  <tr>
+    <th>Name</th>
+    <th>URL</th>
+    <th>Action</th>
+  </tr>
+  <% @items.each do |item| %>
+    <tr>
+      <td><%= link_to item.name, file_path(item) %></td>
+      <td><a href='/files/<%= item.user.username %>/<%= item.name %>?download'><%= item.user.username %>/<%= item.name %></a></td>
+      <td><%= link_to 'Delete', file_path(item), { :class => 'delete' } %></td>
+    </tr>
+  <% end %>
+</table>
+<% else %>
+  <p class='empty'>
+    You haven't uploaded any files yet, <%= link_to 'upload one!', action: :new %>.
+  </p>
+<% end %>
