@@ -1,0 +1,48 @@
+@import 'variables';
+
+form {
+  display: table;
+  margin: 2rem auto;
+
+  width: 25rem;
+
+  background: $secondary;
+
+  border-radius: 5px;
+
+  padding: 2rem 5rem;
+
+  .field {
+    margin: 2rem 0;
+  }
+
+  input {
+    margin-top: 0.7rem;
+
+    width: 90%;
+
+    border-radius: 3px;
+
+    border: 1px solid $light-gray;
+
+    padding: 0.5rem 1rem;
+  }
+
+  input[type="checkbox"], input[type="radio"] {
+    width: auto;
+  }
+
+  input[type="submit"], button {
+    width: 80%;
+    padding: 0.5rem 1rem;
+
+    display: block;
+    margin: 2rem auto;
+
+    cursor: pointer;
+
+    &:hover {
+      background: $gray;
+    }
+  }
+}
