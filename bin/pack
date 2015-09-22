@@ -1,0 +1,71 @@
+#!/usr/bin/env ruby
+
+require 'thor'
+require 'httmultiparty'
+
+# Default configurations
+$DEFAULT_CONFIG = '{
+  "server": "http://localhost:3000",
+  "email": "",
+  "pass": ""
+}'
+
+class App
+  @config_path = File.join(Dir.home, '.pack')
+
+  def self.setup
+    # Create config file
+    unless File.exists? @config_path
+      new_file = File.open(@config_path, 'w')
+      new_file.write $DEFAULT_CONFIG
+      new_file.close
+    end
+
+    # Read and Parse config file
+    @config_file = File.open(@config_path, 'r')
+    $config = JSON.parse(@config_file.read)
+  end
+end
+
+# CLI class
+class CommandLine < Thor
+  desc 'upload', 'Upload file(s) to server'
+  def upload(*paths)
+    req = API.new($config['email'], $config['pass']);
+    paths.each do |path|
+      req.post_file path
+    end
+  end
+end
+
+App.setup
+
+class API
+  include HTTMultiParty
+  base_uri $config['server']
+
+  # API paths to send requests to
+  API_PATHS = {
+    upload: '/files'
+  }
+
+  def initialize(username, password)
+    @auth = {:username => username, :password => password}
+  end
+
+  def post_file(path)
+    res = self.class.post(API_PATHS[:upload], :query => {
+      :file => {
+        :file => File.open(path)
+      },
+      :from => 'pack-client'
+    }, :detect_mime_type => true,
+       :accept => :json,
+       :basic_auth => @auth)
+
+    puts res.code == 200 ? 'Done.' : 'Error! ' + res.message
+    puts res
+  end
+end
+
+CommandLine.start

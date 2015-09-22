@@ -1,7 +1,17 @@
 require 'mimemagic'
 
 class FilesController < ApplicationController
-  before_action :authenticate_user!
+  before_filter :check_auth
+
+  def check_auth
+    authenticate_or_request_with_http_basic do |username,password|
+      resource = User.find_by email: username
+      if resource.valid_password?(password)
+        sign_in :user, resource
+      end
+    end
+    warden.custom_failure! if performed?
+  end
 
   def index
     @items = Item.where user: current_user.id
@@ -31,12 +41,23 @@ class FilesController < ApplicationController
   def create
     file = params[:file][:file]
 
-    dest = File.expand_path(file.original_filename, Rails.root.join('files').join(current_user.username))
+    name = file.original_filename
+    user_path = Rails.root.join('files').join(current_user.username)
+    dest = File.expand_path(name, user_path)
+
+    if File.exists? dest
+      duplicates = Item.where('name LIKE ?', name + '%')
+      base = File.basename(name) + duplicates.count.to_s
+      # render plain: base and return
+      name = base + File.extname(name)
+      dest = File.expand_path(name, user_path)
+    end
+
     src = file.tempfile.path
     stat = File.stat src
 
     @item = Item.new
-    @item.name = file.original_filename
+    @item.name = name
     @item.path = dest
     @item.user = current_user
     @item.size = stat.size
@@ -48,8 +69,14 @@ class FilesController < ApplicationController
     end
 
     if @item.save and FileUtils.mv src, dest
+      if params[:from] == 'pack-client'
+        render plain: "ok" and return
+      end
       redirect_to file_path(@item)
     else
+      if params[:from] == 'pack-client'
+        render plain: "ok" and return
+      end
       render :new
     end
   end
@@ -57,7 +84,8 @@ class FilesController < ApplicationController
   def destroy
     @item = Item.find params[:id]
 
-    FileUtils.rm @item.path and @item.destroy
+    @item.destroy
+    FileUtils.rm @item.path
 
     redirect_to files_path
   end
