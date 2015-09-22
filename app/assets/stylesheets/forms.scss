@@ -45,4 +45,8 @@ form {
       background: $gray;
     }
   }
+
+  input[type="file"] {
+    border: none;
+  }
 }

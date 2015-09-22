@@ -4,6 +4,7 @@
   <div class='user'>
     <% if current_user %>
       <%= link_to current_user.username, files_path %>
+      <%= link_to 'logout', destroy_user_session_path, { :class => 'delete' } %>
     <% else %>
       <%= link_to 'Login', new_user_session_path %>
     <% end %>
