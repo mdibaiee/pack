@@ -49,6 +49,7 @@ GEM
       coffee-script-source
       execjs
     coffee-script-source (1.9.1.1)
+    daemons (1.2.3)
     debug_inspector (0.0.2)
     devise (3.5.2)
       bcrypt (~> 3.0)
@@ -59,6 +60,7 @@ GEM
       warden (~> 1.2.3)
     erubis (2.7.0)
     execjs (2.6.0)
+    filewatch (0.6.5)
     globalid (0.3.6)
       activesupport (>= 4.1.0)
     httmultiparty (0.3.16)
@@ -163,7 +165,9 @@ PLATFORMS
 
 DEPENDENCIES
   byebug
+  daemons
   devise
+  filewatch
   httmultiparty
   jbuilder (~> 2.0)
   jquery-rails

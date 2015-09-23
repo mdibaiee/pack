@@ -10,7 +10,6 @@ class FilesController < ApplicationController
         sign_in :user, resource
       end
     end
-    warden.custom_failure! if performed?
   end
 
   def index
@@ -45,7 +44,9 @@ class FilesController < ApplicationController
     user_path = Rails.root.join('files').join(current_user.username)
     dest = File.expand_path(name, user_path)
 
-    if File.exists? dest
+    if not params[:replace].empty?
+      @item = Item.find_by(name: name)
+    elsif File.exists? dest
       duplicates = Item.where('name LIKE ?', name + '%')
       base = File.basename(name) + duplicates.count.to_s
       # render plain: base and return
@@ -56,12 +57,14 @@ class FilesController < ApplicationController
     src = file.tempfile.path
     stat = File.stat src
 
-    @item = Item.new
-    @item.name = name
-    @item.path = dest
-    @item.user = current_user
-    @item.size = stat.size
-    @item.filetype = MimeMagic.by_path src
+    unless @item
+      @item = Item.new
+      @item.name = name
+      @item.path = dest
+      @item.user = current_user
+      @item.size = stat.size
+      @item.filetype = MimeMagic.by_path src
+    end
 
     dest_parent = File.dirname dest
     unless File.exists? dest_parent
@@ -70,20 +73,28 @@ class FilesController < ApplicationController
 
     if @item.save and FileUtils.mv src, dest
       if params[:from] == 'pack-client'
-        render plain: "ok" and return
+        render json: @item and return
       end
       redirect_to file_path(@item)
     else
       if params[:from] == 'pack-client'
-        render plain: "ok" and return
+        render plain: @item and return
       end
       render :new
     end
   end
 
   def destroy
-    @item = Item.find params[:id]
+    user = params[:user]
+    name = params[:name]
+    id = params[:id]
 
+    if user and name
+      user_instance = User.find_by username: user
+      @item = Item.find_by user_id: user_instance.id, name: name
+    else
+      @item = Item.find id
+    end
     @item.destroy
     FileUtils.rm @item.path
 
