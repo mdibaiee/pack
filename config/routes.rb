@@ -7,6 +7,7 @@ Rails.application.routes.draw do
 
   resources :files
   get 'files/:user/*name' => 'files#show', constraints: { name: /[^\/]*/ }
+  delete 'files/:user/*name' => 'files#destroy', constraints: { name: /[^\/]*/ }
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

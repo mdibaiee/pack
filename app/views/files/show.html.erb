@@ -12,11 +12,11 @@
     <td><%= @item.name %></td>
     <td><a href='/files/<%= @item.user.username %>/<%= @item.name %>?download'><%= @item.user.username %>/<%= @item.name %></a></td>
     <td><%= @item.size %></td>
-    <td><%= @item.filetype %></td>
+    <td><%= @item.filetype or 'Unknown' %></td>
   </tr>
 </table>
 
-<% if @item.filetype.start_with? 'image' %>
+<% if @item.filetype and @item.filetype.start_with? 'image' %>
   <h3>Image Preview</h3>
   <img src="/files/<%= @item.user.username %>/<%= @item.name %>?download">
 <% end %>
