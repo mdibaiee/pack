@@ -17,6 +17,11 @@ module App
     # Read and Parse config file
     @config_file = File.open(@config_path, 'r')
     @config = JSON.parse(@config_file.read)
+
+    if @config['email'].empty? or @config['pass'].empty?
+      abort "You have not configured your credentials yet, add them to ~/.pack"
+    end
+
     @config['username'] = @config['email'][/[^@]*/]
 
     self.api.setup(@config)
