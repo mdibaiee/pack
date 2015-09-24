@@ -8,4 +8,5 @@ Gem::Specification.new do |s|
   s.homepage     = 'https://github.com/mdibaiee/pack'
   s.license      = 'GPUv3'
   s.executables << 'pack'
+  s.files        = ['lib/app.rb', 'lib/tasks/api.rb', 'lib/tasks/watch.rb']
 end
