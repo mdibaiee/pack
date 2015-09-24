@@ -16,8 +16,8 @@ class CommandLine < Thor
   desc 'upload', 'Upload file(s) to server'
   method_option :replace, :aliases => '-r', :desc => 'Replace remote files with duplicate names', :type => :boolean
   def upload(*paths)
+    expand_paths paths
     paths.each do |path|
-      path = File.expand_path path
       App.api.post_file path, options[:replace]
     end
   end
@@ -25,15 +25,38 @@ class CommandLine < Thor
   desc 'watch', 'Watch for changes and sync files, replaces files by default'
   method_option :no_replace, :desc => 'Do not replace files but upload a new instance with each change', :type => :boolean, :default => false
   def watch(*paths)
+    threads = []
+    expand_paths paths
+
     replace = !options[:no_replace]
+
     paths.each do |path|
-      path = File.expand_path path
-      puts path
-      App.watch path do |event|
-        if event == :create or event == :modify
-          App.api.post_file path, replace
-        elsif event == :delete
-          App.api.delete_file path
+      threads << Thread.new do
+        App.watch path do |event|
+          if event == :create or event == :modify
+            App.api.post_file path, replace
+          elsif event == :delete
+            App.api.delete_file path
+          end
+        end
+      end
+    end
+
+    threads.each do |t| t.join end
+  end
+
+  no_commands do
+    def expand_paths(paths)
+      paths.each do |path|
+        path = File.expand_path path
+
+        if File.directory? path
+          paths.delete path
+          entries = Dir.glob("#{path}/*").map do |child|
+            File.expand_path child
+          end
+
+          paths = paths.concat entries
         end
       end
     end
