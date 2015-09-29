@@ -49,7 +49,7 @@ class FilesController < ApplicationController
     elsif File.exists? dest
       duplicates = Item.where('name LIKE ?', name + '%')
       ext = File.extname(name)
-      base = File.basename(name, ext) + duplicates.count.to_s
+      base = File.basename(name, ext) + '(' + duplicates.count.to_s + ')'
       # render plain: base and return
       name = base + ext
       dest = File.expand_path(name, user_path)
